@@ -1,12 +1,7 @@
-begin
-  require "sidekiq/web"
-rescue LoadError
-  # client-only usage
-end
-
-require "sidekiq/history/version"
-require "sidekiq/history/middleware"
-require "sidekiq/history/web_extension"
+require 'sidekiq/web'
+require 'sidekiq/history/version'
+require 'sidekiq/history/middleware'
+require 'sidekiq/history/web_extension'
 
 module Sidekiq
   def self.history_max_count=(value)
@@ -42,13 +37,11 @@ Sidekiq.configure_server do |config|
   end
 end
 
-if defined?(Sidekiq::Web)
-  Sidekiq::Web.register(Sidekiq::History::WebExtension)
+Sidekiq::Web.register(Sidekiq::History::WebExtension)
 
-  if Sidekiq::Web.tabs.is_a?(Array)
-    # For sidekiq < 2.5
-    Sidekiq::Web.tabs << "history"
-  else
-    Sidekiq::Web.tabs['History'] = 'history'
-  end
+if Sidekiq::Web.tabs.is_a?(Array)
+  # For sidekiq < 2.5
+  Sidekiq::Web.tabs << 'history'
+else
+  Sidekiq::Web.tabs['History'] = 'history'
 end
