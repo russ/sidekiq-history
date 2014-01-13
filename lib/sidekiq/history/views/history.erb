@@ -1,0 +1,50 @@
+<header class="row">
+  <div class="span5">
+    <h3>History</h3>
+  </div>
+  <div class="span4">
+    <% if @messages.size > 0 %>
+      <%= erb :_paging, :locals => { :url => "#{root_path}history#@name" } %>
+    <% end %>
+  </div>
+</header>
+
+<% if @messages.size > 0 %>
+  <table class="table table-striped table-bordered table-white" style="width: 100%; margin: 0; table-layout:fixed;">
+    <thead>
+      <th style="width: 25%">Worker, Args</th>
+      <th style="width: 10%">Queue</th>
+      <th style="width: 15%">Started At</th>
+      <th style="width: 50%">Processor</th>
+    </thead>
+    <% @messages.each do |msg| %>
+      <tr>
+        <td style="overflow: hidden; text-overflow: ellipsis;">
+          <%= msg['worker'] %>
+          <br />
+          <%= msg['payload']['args'].inspect[0..100] %>
+        </td>
+        <td><%= msg['queue'] %></td>
+        <td>
+          <%= relative_time(Time.parse(msg['started_at'])) %>
+        </td>
+        <td style="overflow: auto; padding: 10px;">
+          Processor: <%= msg['processor'] %>
+        </td>
+      </tr>
+    <% end %>
+  </table>
+  <div class="row">
+    <div class="span5">
+      <form class="form-inline" action="<%= "#{root_path}history/remove" %>" method="post" style="margin: 20px 0">
+        <input class="btn btn-danger btn-small" type="submit" name="delete" value="Clear All" />
+        <label class="checkbox">
+          <input type="checkbox" name="counter" value="true" />
+          reset history counter
+        </label>
+      </form>
+    </div>
+  </div>
+<% else %>
+  <div class="alert alert-success">No jobs found.</div>
+<% end %>
