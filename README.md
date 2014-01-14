@@ -1,6 +1,6 @@
 # Sidekiq::History
 
-TODO: Write a gem description
+A really simple addition to sidekiq web to enable a job history log.
 
 ## Installation
 
