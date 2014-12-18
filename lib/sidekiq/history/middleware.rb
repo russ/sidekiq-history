@@ -1,3 +1,5 @@
+require 'sidekiq/util'
+
 module Sidekiq
   module History
     class Middleware
@@ -12,7 +14,7 @@ module Sidekiq
           started_at: Time.now.utc,
           payload: msg,
           worker: msg['class'],
-          processor: "#{hostname}:#{process_id}-#{Thread.current.object_id}",
+          processor: "#{identity}-#{Thread.current.object_id}",
           queue: queue
         }
 
