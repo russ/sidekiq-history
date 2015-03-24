@@ -18,7 +18,7 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Nothing left to do. Mount sidekiq, and go to the web interface. You'll see a shiny new History tab!
 
 ## Contributing
 
