@@ -16,6 +16,10 @@ Or install it yourself as:
 
     $ gem install sidekiq-history
 
+## Usage
+
+Nothing left to do. Mount sidekiq, and go to the web interface. You'll see a shiny new History tab!
+
 ## Screenshot
 
 ![Web UI](https://github.com/russ/sidekiq-history/raw/master/examples/screenshot.png)
