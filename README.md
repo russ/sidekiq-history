@@ -16,9 +16,9 @@ Or install it yourself as:
 
     $ gem install sidekiq-history
 
-## Usage
+## Screenshot
 
-TODO: Write usage instructions here
+![Web UI](https://github.com/russ/sidekiq-history/raw/master/examples/screenshot.png)
 
 ## Contributing
 
