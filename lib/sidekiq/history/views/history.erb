@@ -1,12 +1,12 @@
 <header class="row">
-  <div class="span5">
+  <div class="col-sm-5">
     <h3>History</h3>
   </div>
-  <div class="span4">
-    <% if @messages.size > 0 %>
+  <% if @messages.size > 0 %>
+    <div class="col-sm-4">
       <%= erb :_paging, :locals => { :url => "#{root_path}history#@name" } %>
-    <% end %>
-  </div>
+    </div>
+  <% end %>
 </header>
 
 <% if @messages.size > 0 %>
@@ -35,9 +35,9 @@
     <% end %>
   </table>
   <div class="row">
-    <div class="span5">
+    <div class="col-sm-5">
       <form class="form-inline" action="<%= "#{root_path}history/remove" %>" method="post" style="margin: 20px 0">
-        <input class="btn btn-danger btn-small" type="submit" name="delete" value="Clear All" />
+        <input class="btn btn-danger btn-xs" type="submit" name="delete" value="Clear All" />
         <label class="checkbox">
           <input type="checkbox" name="counter" value="true" />
           reset history counter
