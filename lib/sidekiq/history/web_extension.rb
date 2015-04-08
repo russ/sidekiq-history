@@ -16,6 +16,8 @@ module Sidekiq
           Sidekiq::History.reset_history(counter: params['counter'])
           redirect("#{root_path}history")
         end
+
+        app.settings.locales << File.expand_path('locales', ROOT)
       end
     end
   end
