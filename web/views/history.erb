@@ -17,19 +17,19 @@
       <th style="width: 15%"><%= t('StartedAt') %></th>
       <th style="width: 50%"><%= t('Processor') %></th>
     </thead>
-    <% @messages.each do |msg| %>
+    <% @messages.each do |entry| %>
       <tr>
-        <td style="overflow: hidden; text-overflow: ellipsis;">
-          <%= msg['worker'] %>
-          <br />
-          <%= msg['payload']['args'].inspect[0..100] %>
-        </td>
-        <td><%= msg['queue'] %></td>
         <td>
-          <%= relative_time(Time.parse(msg['started_at'])) %>
+          <%= entry['payload']['class'] %>
+          <br />
+          <div class="args"><%= display_args(entry['payload']['args']) %></div>
+        </td>
+        <td><%= entry.queue %></td>
+        <td>
+          <%= relative_time(Time.parse(entry['started_at'])) %>
         </td>
         <td style="overflow: auto; padding: 10px;">
-          <%= t('Processor') %>: <%= msg['processor'] %>
+          <%= t('Processor') %>: <%= entry['processor'] %>
         </td>
       </tr>
     <% end %>
