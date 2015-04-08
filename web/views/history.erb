@@ -12,24 +12,26 @@
 <% if @messages.size > 0 %>
   <table class="table table-striped table-bordered table-white">
     <thead>
-      <th style="width: 25%"><%= t('WorkerArgs') %></th>
-      <th style="width: 10%"><%= t('Queue') %></th>
-      <th style="width: 15%"><%= t('StartedAt') %></th>
-      <th style="width: 50%"><%= t('Processor') %></th>
+      <th><%= t('Started') %></th>
+      <th><%= t('Queue') %></th>
+      <th><%= t('Job') %></th>
+      <th><%= t('Arguments') %></th>
+      <th><%= t('Process') %></th>
     </thead>
     <% @messages.each do |entry| %>
       <tr>
         <td>
-          <%= entry['payload']['class'] %>
-          <br />
-          <div class="args"><%= display_args(entry['payload']['args']) %></div>
+          <%= relative_time(Time.parse(entry['started_at'])) %>
         </td>
         <td><%= entry.queue %></td>
         <td>
-          <%= relative_time(Time.parse(entry['started_at'])) %>
+          <%= entry['payload']['class'] %>
         </td>
-        <td style="overflow: auto; padding: 10px;">
-          <%= t('Processor') %>: <%= entry['processor'] %>
+        <td>
+          <div class="args"><%= display_args(entry['payload']['args']) %></div>
+        </td>
+        <td>
+          <%= entry['processor'] %>
         </td>
       </tr>
     <% end %>

@@ -1,8 +1,4 @@
 en:
   History: History
-  WorkerArgs: Worker, Args
-  Queue: Queue
-  StartedAt: Started At
-  Processor: Processor
   ResetHistoryCounter: reset history counter
   NoJobsFound: No jobs found
