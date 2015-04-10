@@ -26,9 +26,17 @@ module Sidekiq
     end
 
     def self.count
-      Sidekiq.redis { |r| r.llen(LIST_KEY) }
+      Sidekiq.redis { |r| r.zcard(LIST_KEY) }
     end
+
+    class HistorySet < Sidekiq::JobSet
+      def initialize
+        super LIST_KEY
+      end
+    end
+
   end
+
 end
 
 Sidekiq.configure_server do |config|
