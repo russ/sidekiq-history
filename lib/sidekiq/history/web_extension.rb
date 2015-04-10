@@ -12,9 +12,23 @@ module Sidekiq
           render(:erb, File.read("#{ROOT}/views/history.erb"))
         end
 
-        app.post "/history/remove" do
+        app.post '/history/remove' do
           Sidekiq::History.reset_history(counter: params['counter'])
           redirect("#{root_path}history")
+        end
+
+        app.get '/filter/history' do
+          return redirect "#{root_path}history" unless params[:substr]
+
+          @messages = search(HistorySet.new, params[:substr])
+          render(:erb, File.read("#{ROOT}/views/history.erb"))
+        end
+
+        app.post '/filter/history' do
+          return redirect "#{root_path}history" unless params[:substr]
+
+          @messages = search(HistorySet.new, params[:substr])
+          render(:erb, File.read("#{ROOT}/views/history.erb"))
         end
 
         app.settings.locales << File.expand_path('locales', ROOT)

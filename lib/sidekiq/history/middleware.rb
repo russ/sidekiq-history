@@ -19,9 +19,9 @@ module Sidekiq
         }
 
         Sidekiq.redis do |conn|
-          conn.lpush(LIST_KEY, Sidekiq.dump_json(data))
+          conn.zadd(LIST_KEY, data[:started_at].to_f, Sidekiq.dump_json(data))
           unless Sidekiq.history_max_count == false
-            conn.ltrim(LIST_KEY, 0, Sidekiq.history_max_count - 1)
+            conn.zremrangebyrank(LIST_KEY, 0, -(Sidekiq.history_max_count + 1))
           end
         end
 

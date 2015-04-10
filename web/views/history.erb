@@ -7,6 +7,7 @@
       <%= erb :_paging, :locals => { :url => "#{root_path}history" } %>
     </div>
   <% end %>
+  <%= filtering('history') %>
 </header>
 
 <% if @messages.size > 0 %>
