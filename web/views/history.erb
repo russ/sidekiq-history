@@ -41,7 +41,7 @@
     <div class="col-sm-5">
       <form class="form-inline" action="<%= "#{root_path}history/remove" %>" method="post" style="margin: 20px 0">
         <%= csrf_tag if respond_to?(:csrf_tag) %>
-        <input class="btn btn-danger btn-xs" type="submit" name="delete" value="Clear All" />
+        <input class="btn btn-danger btn-xs" type="submit" name="delete" value="<%= t('ClearAll') %>" />
         <label class="checkbox">
           <input type="checkbox" name="counter" value="true" />
           <%= t('ResetHistoryCounter') %>
