@@ -6,7 +6,7 @@ module Sidekiq
       def self.registered(app)
         app.get '/history' do
           @count = (params[:count] || 25).to_i
-          (@current_page, @total_size, @messages) = page('history', params[:page], @count)
+          (@current_page, @total_size, @messages) = page('history', params[:page], @count, reverse: true)
           @messages = @messages.map { |msg, score| Sidekiq::SortedEntry.new(nil, score, msg) }
 
           render(:erb, File.read("#{ROOT}/views/history.erb"))
