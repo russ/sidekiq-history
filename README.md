@@ -20,6 +20,8 @@ Or install it yourself as:
 
 Nothing left to do. Mount sidekiq, and go to the web interface. You'll see a shiny new History tab!
 
+By default it will keep history on the last 1000 jobs.  To change that set `SIDEKIQ_HISTORY_MAX_COUNT = 10000`.  Be careful because the data is persisted in Redis Sorted Set and it WILL take up RAM.  Max possible value is 4294967295 per Redis limit.
+
 ## Screenshot
 
 ![Web UI](https://github.com/russ/sidekiq-history/raw/master/examples/screenshot.png)
