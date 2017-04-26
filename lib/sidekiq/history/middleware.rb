@@ -9,6 +9,7 @@ module Sidekiq
 
       def call(worker, msg, queue)
         self.msg = msg
+        job_class = msg['args'][0]['job_class']
 
         data = {
           started_at: Time.now.utc,
@@ -26,12 +27,16 @@ module Sidekiq
             conn.del(LIST_KEY)
             list.each do |entry|
               migrated_data = JSON.parse(entry)
-              conn.zadd(LIST_KEY, data[:started_at].to_f, Sidekiq.dump_json(migrated_data))
+              if record_history(job_class) == true
+                conn.zadd(LIST_KEY, data[:started_at].to_f, Sidekiq.dump_json(migrated_data))
+              end
             end
           end
 
           # regular storage of history
-          conn.zadd(LIST_KEY, data[:started_at].to_f, Sidekiq.dump_json(data))
+          if record_history(job_class) == true
+            conn.zadd(LIST_KEY, data[:started_at].to_f, Sidekiq.dump_json(data))
+          end
           unless Sidekiq.history_max_count == false
             conn.zremrangebyrank(LIST_KEY, 0, -(Sidekiq.history_max_count + 1))
           end
@@ -39,6 +44,29 @@ module Sidekiq
 
         yield
       end
+
+      private
+
+      # check if this job should be recorded
+      def record_history job_class
+        # first check inclusion
+        if defined? INCLUDE_JOBS
+          if INCLUDE_JOBS.include? job_class
+            return true
+          else
+            return false
+          end
+        elsif defined? EXCLUDE_JOBS
+          if EXCLUDE_JOBS.include? job_class
+            return false
+          else
+            return true
+          end
+        else
+          return true
+        end
+      end
+
     end
   end
 end

@@ -9,7 +9,13 @@ module Sidekiq
   end
 
   def self.history_max_count
-    return 1000 if @history_max_count.nil?
+    # => use default 1000 unless specified in config.  Max is 4294967295 per Redis Sorted Set limit
+    if defined? MAX_COUNT
+      hmc = [MAX_COUNT, 4294967295].min
+    else
+      hmc = 1000
+    end
+    return hmc if @history_max_count.nil?
     @history_max_count
   end
 
