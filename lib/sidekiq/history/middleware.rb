@@ -9,7 +9,7 @@ module Sidekiq
 
       def call(worker, msg, queue)
         self.msg = msg
-        job_class = msg['args'][0]['job_class']
+        job_class = msg['class']
 
         data = {
           started_at: Time.now.utc,
