@@ -9,26 +9,51 @@ module Sidekiq
   end
 
   def self.history_max_count
-    # => use default 1000 unless specified in config.  Max is 4294967295 per Redis Sorted Set limit
-    if defined? MAX_COUNT
-      hmc = [MAX_COUNT, 4294967295].min
-    else
-      hmc = 1000
-    end
+    # => use default 1000 unless specified in config.
+    # Max is 4294967295 per Redis Sorted Set limit
+    hmc = if defined? MAX_COUNT
+            [MAX_COUNT, 4_294_967_295].min
+          else
+            1000
+          end
     return hmc if @history_max_count.nil?
     @history_max_count
+  end
+
+  def self.history_exclude_jobs=(value)
+    @history_exclude_jobs = value
+  end
+
+  def self.history_exclude_jobs
+    if defined? Sidekiq::History::Middleware::EXCLUDE_JOBS
+      jobs = Sidekiq::History::Middleware::EXCLUDE_JOBS
+    end
+    return jobs if @history_exclude_jobs.nil?
+    @history_exclude_jobs
+  end
+
+  def self.history_include_jobs=(value)
+    @history_include_jobs = value
+  end
+
+  def self.history_include_jobs
+    if defined? Sidekiq::History::Middleware::INCLUDE_JOBS
+      jobs = Sidekiq::History::Middleware::INCLUDE_JOBS
+    end
+    return jobs if @history_include_jobs.nil?
+    @history_include_jobs
   end
 
   module History
     LIST_KEY = :history
 
     def self.reset_history(options = {})
-      Sidekiq.redis { |c|
+      Sidekiq.redis do |c|
         c.multi do
           c.del(LIST_KEY)
           c.set('stat:history', 0) if options[:counter] || options['counter']
         end
-      }
+      end
     end
 
     def self.count
@@ -40,9 +65,7 @@ module Sidekiq
         super LIST_KEY
       end
     end
-
   end
-
 end
 
 Sidekiq.configure_server do |config|
