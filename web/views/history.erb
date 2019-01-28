@@ -24,7 +24,9 @@
         <td>
           <%= relative_time(Time.parse(entry['started_at'])) %>
         </td>
-        <td><%= entry.queue %></td>
+        <td>
+          <a href="<%= root_path %>queues/<%= entry.queue %>"><%= entry.queue %></a>
+        </td>
         <td>
           <%= entry['payload']['class'] %>
         </td>

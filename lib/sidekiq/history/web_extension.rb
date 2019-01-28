@@ -1,7 +1,7 @@
 module Sidekiq
   module History
     module WebExtension
-      ROOT = File.expand_path('../../../../web', __FILE__)
+      ROOT = File.expand_path('../../../web', __dir__)
 
       def self.registered(app)
         app.get '/history' do

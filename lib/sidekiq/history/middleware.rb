@@ -7,14 +7,22 @@ module Sidekiq
 
       attr_accessor :msg
 
-      def call(worker, msg, queue)
+      def call(_worker, msg, queue)
         self.msg = msg
-        job_class = msg['class']
+
+        # Use the Sidekiq API to unwrap the job
+        job = Sidekiq::Job.new(msg)
+        job_class = job.display_class
+
+        # Setup a unwraped copy of the bare job data
+        payload = msg.dup
+        payload['class'] = job_class
+        payload['args'] = job.display_args
 
         data = {
           started_at: Time.now.utc,
-          payload: msg,
-          worker: msg['class'],
+          payload: payload,
+          worker: job_class,
           processor: "#{identity}-#{Thread.current.object_id}",
           queue: queue
         }
@@ -28,7 +36,8 @@ module Sidekiq
             list.each do |entry|
               migrated_data = JSON.parse(entry)
               if record_history(job_class) == true
-                conn.zadd(LIST_KEY, data[:started_at].to_f, Sidekiq.dump_json(migrated_data))
+                conn.zadd(LIST_KEY, data[:started_at].to_f,
+                          Sidekiq.dump_json(migrated_data))
               end
             end
           end
@@ -48,25 +57,17 @@ module Sidekiq
       private
 
       # check if this job should be recorded
-      def record_history job_class
-        # first check inclusion
-        if defined? INCLUDE_JOBS
-          if INCLUDE_JOBS.include? job_class
-            return true
-          else
-            return false
-          end
-        elsif defined? EXCLUDE_JOBS
-          if EXCLUDE_JOBS.include? job_class
-            return false
-          else
-            return true
-          end
-        else
-          return true
+      def record_history(job_class)
+        # first check inclusion, when present
+        # it will take precedence over exclude
+        if !Sidekiq.history_include_jobs.nil?
+          return Sidekiq.history_include_jobs.include?(job_class)
+        elsif !Sidekiq.history_exclude_jobs.nil?
+          return !Sidekiq.history_exclude_jobs.include?(job_class)
         end
-      end
 
+        true
+      end
     end
   end
 end
