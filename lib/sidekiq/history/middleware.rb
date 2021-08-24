@@ -11,7 +11,7 @@ module Sidekiq
         self.msg = msg
 
         # Use the Sidekiq API to unwrap the job
-        job = Sidekiq::Job.new(msg)
+        job = sidekiq_job_class.new(msg)
         job_class = job.display_class
 
         # Setup a unwraped copy of the bare job data
@@ -67,6 +67,19 @@ module Sidekiq
         end
 
         true
+      end
+
+      def sidekiq_job_class
+        @sidekiq_job_class ||= begin
+          actual = Gem.loaded_specs['sidekiq'].version
+          if Gem::Dependency.new('', '>= 6.2.2').match?('', actual)
+            # Renamed internal API class Sidekiq::Job to Sidekiq::JobRecord,
+            # since 6.2.2. See: https://bit.ly/3gtxViK
+            Sidekiq::JobRecord
+          else
+            Sidekiq::Job
+          end
+        end
       end
     end
   end
