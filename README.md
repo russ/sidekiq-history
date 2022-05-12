@@ -2,6 +2,9 @@
 
 A really simple addition to sidekiq web to enable a job history log.
 
+# Maintainers Wanted
+This project is looking for maintainers. I don't use Ruby primarily anymore and don't interact with this code much.
+
 ## Installation
 
 Add this line to your application's Gemfile:
