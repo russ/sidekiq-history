@@ -1,9 +1,9 @@
-require 'sidekiq/util'
+require 'sidekiq/component'
 
 module Sidekiq
   module History
     class Middleware
-      include Sidekiq::Util
+      include Sidekiq::Component
 
       attr_accessor :msg
 
