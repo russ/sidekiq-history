@@ -31,7 +31,9 @@ module Sidekiq
           render(:erb, File.read("#{ROOT}/views/history.erb"))
         end
 
-        app.settings.locales << File.expand_path('locales', ROOT)
+        if Gem::Dependency.new('', '< 8.0.0').match?('', Gem.loaded_specs['sidekiq'].version)
+          app.settings.locales << File.expand_path('locales', ROOT)
+        end
       end
     end
   end
