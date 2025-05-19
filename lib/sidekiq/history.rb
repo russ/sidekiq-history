@@ -74,11 +74,22 @@ Sidekiq.configure_server do |config|
   end
 end
 
-Sidekiq::Web.register(Sidekiq::History::WebExtension)
-
-if Sidekiq::Web.tabs.is_a?(Array)
-  # For sidekiq < 2.5
-  Sidekiq::Web.tabs << 'history'
+# for Sidekiq >= 8.0.0
+if Gem::Dependency.new('', '>= 8.0.0').match?('', Gem.loaded_specs['sidekiq'].version)
+  Sidekiq::Web.configure do |config|
+    config.register_extension(Sidekiq::History::WebExtension,
+                              name: 'History',
+                              tab: 'History',
+                              index: 'history',
+                              root_dir: File.expand_path('../../web', __dir__))
+  end
 else
-  Sidekiq::Web.tabs['History'] = 'history'
+  Sidekiq::Web.register(Sidekiq::History::WebExtension)
+
+  if Sidekiq::Web.tabs.is_a?(Array)
+    # For Sidekiq < 2.5
+    Sidekiq::Web.tabs << 'history'
+  else
+    Sidekiq::Web.tabs['History'] = 'history'
+  end
 end
