@@ -25,9 +25,15 @@ module Sidekiq
         app.helpers Helpers
 
         app.get '/history' do
-          @count = (request_params(:count) || 25).to_i
-          (@current_page, @total_size, @messages) = page('history', request_params(:page), @count, reverse: true)
-          @messages = @messages.map { |msg, score| Sidekiq::SortedEntry.new(nil, score, msg) }
+          substr = request_params(:substr)
+
+          if substr && substr != ''
+            @messages = search(HistorySet.new, substr)
+          else
+            @count = (request_params(:count) || 25).to_i
+            (@current_page, @total_size, @messages) = page('history', request_params(:page), @count, reverse: true)
+            @messages = @messages.map { |msg, score| Sidekiq::SortedEntry.new(nil, score, msg) }
+          end
 
           render(:erb, File.read("#{ROOT}/views/history.erb"))
         end
